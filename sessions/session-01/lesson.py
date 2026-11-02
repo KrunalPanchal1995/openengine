@@ -28,7 +28,8 @@ OUT = (pathlib.Path(__file__).resolve().parent if "__file__" in globals() else p
 #     Qh = W + Qc      so      W = Qh - Qc        efficiency = W / Qh
 #
 # Qh is heat taken from the hot source, Qc is heat rejected to the cold surroundings, W is
-# the useful work. All three are in joules (J) per cycle.
+# the useful (net) work. All three are in joules (J) per cycle, and all three are
+# positive numbers: the direction of each flow is already in its name.
 
 # %%
 def work(q_hot, q_cold):
@@ -70,12 +71,16 @@ def is_allowed(q_hot, q_cold, t_hot, t_cold):
 # ## Step 3: a P-V loop and its area
 # Plot the gas pressure P against its volume V while the engine goes round one cycle. When
 # the gas expands at high pressure it does more work than is spent squeezing it back at low
-# pressure, so a loop that goes **clockwise** gives net work. The enclosed area is that work.
+# pressure, so a loop that goes **clockwise** gives positive net work, and the area enclosed
+# by the loop equals that work.
 # With pressure in kPa and volume in litres, kPa x L = J.
 
 # %%
 def rectangle_loop(p_low, p_high, v_low, v_high):
-    """Corners of a clockwise rectangular loop as (V, P) arrays: up, right, down, left."""
+    """Corners of a clockwise rectangular loop as (V, P) arrays.
+
+    It starts at the bottom-left corner (v_low, p_low) and goes up, right, down,
+    then back left to the start, which is clockwise on a P-V graph."""
     v = np.array([v_low, v_low, v_high, v_high])
     p = np.array([p_low, p_high, p_high, p_low])
     return v, p

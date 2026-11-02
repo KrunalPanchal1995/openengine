@@ -9,7 +9,7 @@
 **Prerequisites**
 
 - School arithmetic and the idea of pressure and volume.
-- You have read PRIMER.md and run `python start.py 1` once.
+- You have read [PRIMER.md](../../PRIMER.md) and run `python start.py 1` once.
 
 **Learning objectives.** After this session you can:
 
@@ -48,7 +48,7 @@ $$ \eta \le \eta_{\mathrm{Carnot}} = 1 - \frac{T_c}{T_h} $$
 $$ W = \oint P\,dV $$
 
 ## C. Visual explanation
-The first figure shows three engines that each take 1000 J from a 600 K source: Engine A does 300 J of work (efficiency 0.30), Engine B does 450 J (0.45) and Engine C claims 600 J (0.60). The Carnot limit between 600 K and 300 K is 0.50, so Engine C is impossible. The second figure shows two rectangular P-V loops with the same volume range (1 to 3 L): the loop up to 300 kPa encloses 400 J and the taller loop up to 500 kPa encloses 800 J.
+The first figure shows three engines that each take 1000 J from a 600 K source: Engine A does 300 J of work (efficiency 0.30), Engine B does 450 J (0.45) and Engine C claims 600 J (0.60). The Carnot limit between 600 K and 300 K is 0.50, so Engine C is impossible. The second figure shows two rectangular P-V loops with the same volume range (1 to 3 L): both start at 100 kPa; the loop that goes up to 300 kPa encloses 400 J and the taller loop that goes up to 500 kPa encloses 800 J.
 
 ![Three engines taking 1000 J: work and rejected heat; Engine C breaks the Carnot limit.](../../docs/figures/s01_energy_split.png)
 
@@ -70,7 +70,7 @@ Run the lesson (`python start.py 1`), then open the live app: [Session 1: heat i
 2. Efficiency = 350 / 1000 = 0.35.
 3. Carnot limit = 1 - 300 / 600 = 0.50; since 0.35 is below 0.50 the engine is allowed.
 4. Loop area = (300 - 100) kPa x (3 - 1) L = 200 x 2 = 400 kPa L = 400 J.
-5. If that loop were the same engine's cycle with Qh = 1000 J, then Qc = 600 J and eta = 0.40.
+5. Link the two parts: if this 400 J rectangle were the cycle of an engine that takes Qh = 1000 J, it would reject Qc = 1000 - 400 = 600 J and its efficiency would be 400 / 1000 = 0.40.
 
 **Answer.** W = 350 J, efficiency 0.35 (allowed, limit 0.50); the rectangle encloses 400 J.
 
@@ -92,6 +92,7 @@ What does the second law say about Qc, and what would eta = 1 - Tc / Th need?
 The second law forbids a cyclic engine that takes heat from one source and turns all of it into work. Some heat Qc must go to a colder place. The best case is the Carnot limit 1 - Tc / Th, which reaches 1 only if Tc were 0 K (or Th infinite), and neither is possible. So even a frictionless engine has an efficiency below 1.
 
 </details>
+
 **Question type B: Numerical.** An engine takes 800 J from a hot source and rejects 520 J. Find the work and the efficiency, and check the units and the answer is reasonable.
 
 <details>
@@ -107,6 +108,7 @@ W = Qh - Qc, then divide by Qh.
 W = 800 - 520 = 280 J. eta = 280 / 800 = 0.35 (no unit). Sanity check: the efficiency is between 0 and 1, and W plus Qc gives back 800 J.
 
 </details>
+
 **Question type C: Graph and simulation interpretation.** In the P-V view the loop is the same width but taller after you raise the work. By what factor does the area grow when the top pressure goes from 300 kPa to 500 kPa (bottom 100 kPa, volume 1 to 3 L)? What are the two works?
 
 <details>
@@ -122,6 +124,7 @@ Area = (top - bottom) x width.
 The heights are 200 kPa and 400 kPa, so the area doubles: 400 J becomes 800 J (units: kPa L = J).
 
 </details>
+
 **Question type D: Design and optimisation challenge.** Design: an engine must give 300 J of work per cycle between a 700 K source and 300 K surroundings. What is the smallest heat Qh it must take in, and the smallest Qc? A real engine reaches 0.30. How much heat would it need?
 
 <details>
@@ -144,7 +147,7 @@ Score yourself with [RUBRIC.md](../../RUBRIC.md). Print the [activity sheet](act
 | Common misconception | What is actually true |
 |---|---|
 | An engine with no friction could be 100 percent efficient. | The second law forces heat rejection even without friction; the limit is 1 - Tc / Th. |
-| The Carnot limit can be computed with temperatures in degrees Celsius. | It needs kelvin. With 100 C and 20 C the wrong values would give 0.8; the right ones (373 K and 293 K) give 0.21. |
+| The Carnot limit can be computed with temperatures in degrees Celsius. | It needs kelvin. Putting the Celsius numbers 100 and 20 into the formula wrongly gives 1 - 20 / 100 = 0.8; with 373 K and 293 K the correct limit is 0.21. |
 | The work is the height of the P-V loop. | The work is the enclosed area: pressure height times volume width, in joules. |
 | A clockwise or counter-clockwise loop gives the same work. | Clockwise gives positive work (an engine); counter-clockwise gives negative work (a refrigerator or heat pump). |
 
