@@ -57,7 +57,7 @@ The first figure shows three engines that each take 1000 J from a 600 K source: 
 ![Two rectangular P-V loops: the enclosed area is the work (400 J and 800 J).](../../docs/figures/s01_pv_loop_area.png)
 
 *Two rectangular P-V loops: the enclosed area is the work (400 J and 800 J).*
-ఇంజిన్
+
 ## D. Interactive simulation
 Run the lesson (`python start.py 1`), then open the live app: [Session 1: heat in, work out](https://krunalpanchal1995.github.io/openengine/session-01/) (or `app.html` in this folder). Change the heat taken in and the share of it rejected. Watch the engine picture (arrows are as thick as the heats), then open the P-V view and see the area equal to the work. Raise the hot temperature to see the Carnot limit move.
 
