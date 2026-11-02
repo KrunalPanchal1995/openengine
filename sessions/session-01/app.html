@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Session 1: heat in, work out</title>
 <style>
-  :root { --bg:#ffffff; --fg:#14181f; --muted:#5b6472; --card:#f3f5f8; --accent:#1f6feb; --good:#1a7f37; --bad:#b42318; --line:#d7dce3; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e6e9ee; --muted:#9aa3b2; --card:#171b22; --accent:#58a6ff; --good:#3fb950; --bad:#f97066; --line:#2a313c; } }
+  :root { --bg:#ffffff; --fg:#14181f; --muted:#5b6472; --card:#f3f5f8; --accent:#1f6feb; --good:#1a7f37; --bad:#b42318; --line:#d7dce3;
+    /* plot series: Okabe-Ito colours (safe for colour-blind readers), always paired with a line style */
+    --s1:#0072B2; --s2:#D55E00; --s3:#009E73; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e6e9ee; --muted:#9aa3b2; --card:#171b22; --accent:#58a6ff; --good:#3fb950; --bad:#f97066; --line:#2a313c;
+    --s1:#56B4E9; --s2:#D55E00; --s3:#009E73; } }
   * { box-sizing: border-box; }
   body { margin:0; padding:16px; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, sans-serif; }
   main { max-width: 780px; margin: 0 auto; }
@@ -88,9 +91,11 @@ function axes(o, C) {
   ctx.font = "bold 13px system-ui"; ctx.fillText(o.title || "", L + w / 2, 20);
   return { X, Y, L, T, w, h };
 }
-function curve(f, a, color, x0, x1, n) {
+// line styles carry the meaning as well as colour, so the plots also read in grayscale
+const SOLID = [], DASHED = [10, 6], DOTTED = [2, 5];
+function curve(f, a, color, x0, x1, n, dash) {
   n = n || 160; ctx.save(); ctx.beginPath(); ctx.rect(a.L, a.T, a.w, a.h); ctx.clip();   // never draw outside the plot area
-  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.beginPath();
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.setLineDash(dash || SOLID); ctx.beginPath();
   for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n, y = f(x); i ? ctx.lineTo(a.X(x), a.Y(y)) : ctx.moveTo(a.X(x), a.Y(y)); }
   ctx.stroke(); ctx.restore();
 }
@@ -98,32 +103,42 @@ function dot(a, x, y, color, label) {
   ctx.fillStyle = color; ctx.beginPath(); ctx.arc(a.X(x), a.Y(y), 6, 0, 2 * Math.PI); ctx.fill();
   if (label) { ctx.textAlign = "left"; ctx.font = "12px system-ui"; ctx.fillText(label, a.X(x) + 9, a.Y(y) - 8); }
 }
+function legend(a, items) {   // items: [colour, dash, text]; draws a line sample next to each label
+  ctx.save(); ctx.font = "12px system-ui"; ctx.textAlign = "left"; ctx.lineWidth = 2.5;
+  items.forEach(([color, dash, text], i) => {
+    const y = a.T + 16 + 16 * i;
+    ctx.strokeStyle = color; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(a.L + 12, y - 4); ctx.lineTo(a.L + 40, y - 4); ctx.stroke();
+    ctx.fillStyle = color; ctx.fillText(text, a.L + 46, y);
+  });
+  ctx.restore();
+}
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  const C = { fg: css("--fg"), muted: css("--muted"), accent: css("--accent"), line: css("--line"), good: css("--good"), bad: css("--bad") };
+  const C = { fg: css("--fg"), muted: css("--muted"), accent: css("--accent"), line: css("--line"), good: css("--good"), bad: css("--bad"),
+              s1: css("--s1"), s2: css("--s2"), s3: css("--s3") };
   
 const eta = 1 - p.f / 100, Wk = p.Qh * eta, Qc = p.Qh * p.f / 100, lim = 1 - 300 / p.Th, ok = eta <= lim + 1e-9;
 if (graph === "engine") {
   const th = a => 6 + 48 * a / 1000;
-  ctx.fillStyle = C.bad; ctx.globalAlpha = 0.25; ctx.fillRect(150, 8, 420, 46); ctx.globalAlpha = 1;
-  ctx.strokeStyle = C.bad; ctx.strokeRect(150, 8, 420, 46);
+  ctx.fillStyle = C.s2; ctx.globalAlpha = 0.25; ctx.fillRect(150, 8, 420, 46); ctx.globalAlpha = 1;
+  ctx.strokeStyle = C.s2; ctx.strokeRect(150, 8, 420, 46);
   ctx.fillStyle = C.fg; ctx.font = "13px system-ui"; ctx.textAlign = "center";
   ctx.fillText("hot source, Th = " + p.Th + " K", 360, 36);
-  ctx.fillStyle = C.accent; ctx.globalAlpha = 0.3; ctx.fillRect(150, 366, 420, 46); ctx.globalAlpha = 1;
-  ctx.strokeStyle = C.accent; ctx.strokeRect(150, 366, 420, 46);
+  ctx.fillStyle = C.s1; ctx.globalAlpha = 0.3; ctx.fillRect(150, 366, 420, 46); ctx.globalAlpha = 1;
+  ctx.strokeStyle = C.s1; ctx.setLineDash(DASHED); ctx.strokeRect(150, 366, 420, 46); ctx.setLineDash(SOLID);
   ctx.fillStyle = C.fg; ctx.fillText("cold surroundings, Tc = 300 K", 360, 394);
   ctx.strokeStyle = C.fg; ctx.strokeRect(250, 150, 220, 110);
   ctx.fillText("ENGINE", 360, 210);
-  ctx.fillStyle = C.bad; ctx.fillRect(300 - th(p.Qh) / 2, 56, th(p.Qh), 94);
-  ctx.fillStyle = C.accent; ctx.fillRect(300 - th(Qc) / 2, 260, th(Qc), 106);
-  ctx.fillStyle = C.good; ctx.fillRect(470, 205 - th(Wk) / 2, 150, th(Wk));
+  ctx.fillStyle = C.s2; ctx.fillRect(300 - th(p.Qh) / 2, 56, th(p.Qh), 94);
+  ctx.fillStyle = C.s1; ctx.fillRect(300 - th(Qc) / 2, 260, th(Qc), 106);
+  ctx.fillStyle = C.s3; ctx.fillRect(470, 205 - th(Wk) / 2, 150, th(Wk));
   ctx.fillStyle = C.fg; ctx.textAlign = "left"; ctx.font = "12px system-ui";
   ctx.fillText("Qh = " + p.Qh + " J", 20, 110); ctx.fillText("Qc = " + Qc.toFixed(0) + " J", 20, 320);
   ctx.fillText("W = " + Wk.toFixed(0) + " J", 490, 160);
 } else {
   const A = axes({ x: [0, 4], y: [0, 700], xl: "volume V (L)", yl: "pressure P (kPa)", title: "P-V loop: enclosed area = work" }, C);
   const phi = 100 + Wk / 2;
-  ctx.fillStyle = C.good; ctx.globalAlpha = 0.3; ctx.fillRect(A.X(1), A.Y(phi), A.X(3) - A.X(1), A.Y(100) - A.Y(phi)); ctx.globalAlpha = 1;
+  ctx.fillStyle = C.s3; ctx.globalAlpha = 0.3; ctx.fillRect(A.X(1), A.Y(phi), A.X(3) - A.X(1), A.Y(100) - A.Y(phi)); ctx.globalAlpha = 1;
   ctx.strokeStyle = C.fg; ctx.lineWidth = 2; ctx.strokeRect(A.X(1), A.Y(phi), A.X(3) - A.X(1), A.Y(100) - A.Y(phi));
   ctx.fillStyle = C.fg; ctx.font = "12px system-ui"; ctx.textAlign = "center";
   ctx.fillText("area = (" + (phi - 100).toFixed(0) + " kPa) x (2 L) = " + Wk.toFixed(0) + " J", A.X(2), A.Y(phi) - 8);

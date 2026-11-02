@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Session 3: a crank-angle engine simulation</title>
 <style>
-  :root { --bg:#ffffff; --fg:#14181f; --muted:#5b6472; --card:#f3f5f8; --accent:#1f6feb; --good:#1a7f37; --bad:#b42318; --line:#d7dce3; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e6e9ee; --muted:#9aa3b2; --card:#171b22; --accent:#58a6ff; --good:#3fb950; --bad:#f97066; --line:#2a313c; } }
+  :root { --bg:#ffffff; --fg:#14181f; --muted:#5b6472; --card:#f3f5f8; --accent:#1f6feb; --good:#1a7f37; --bad:#b42318; --line:#d7dce3;
+    /* plot series: Okabe-Ito colours (safe for colour-blind readers), always paired with a line style */
+    --s1:#0072B2; --s2:#D55E00; --s3:#009E73; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e6e9ee; --muted:#9aa3b2; --card:#171b22; --accent:#58a6ff; --good:#3fb950; --bad:#f97066; --line:#2a313c;
+    --s1:#56B4E9; --s2:#D55E00; --s3:#009E73; } }
   * { box-sizing: border-box; }
   body { margin:0; padding:16px; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, sans-serif; }
   main { max-width: 780px; margin: 0 auto; }
@@ -88,9 +91,11 @@ function axes(o, C) {
   ctx.font = "bold 13px system-ui"; ctx.fillText(o.title || "", L + w / 2, 20);
   return { X, Y, L, T, w, h };
 }
-function curve(f, a, color, x0, x1, n) {
+// line styles carry the meaning as well as colour, so the plots also read in grayscale
+const SOLID = [], DASHED = [10, 6], DOTTED = [2, 5];
+function curve(f, a, color, x0, x1, n, dash) {
   n = n || 160; ctx.save(); ctx.beginPath(); ctx.rect(a.L, a.T, a.w, a.h); ctx.clip();   // never draw outside the plot area
-  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.beginPath();
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.setLineDash(dash || SOLID); ctx.beginPath();
   for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n, y = f(x); i ? ctx.lineTo(a.X(x), a.Y(y)) : ctx.moveTo(a.X(x), a.Y(y)); }
   ctx.stroke(); ctx.restore();
 }
@@ -98,9 +103,26 @@ function dot(a, x, y, color, label) {
   ctx.fillStyle = color; ctx.beginPath(); ctx.arc(a.X(x), a.Y(y), 6, 0, 2 * Math.PI); ctx.fill();
   if (label) { ctx.textAlign = "left"; ctx.font = "12px system-ui"; ctx.fillText(label, a.X(x) + 9, a.Y(y) - 8); }
 }
+// temperature colour map: Okabe-Ito blue -> orange -> yellow; brightness rises with temperature,
+// so hot and cold also differ in grayscale and for colour-blind readers
+const HEAT = [[0, 114, 178], [230, 159, 0], [240, 228, 66]];
+function heat(z) {
+  const k = Math.min(1, Math.floor(z * 2)), t = z * 2 - k, a = HEAT[k], b = HEAT[k + 1];
+  return "rgb(" + a.map((c, i) => Math.round(c + (b[i] - c) * t)).join(",") + ")";
+}
+function legend(a, items) {   // items: [colour, dash, text]; draws a line sample next to each label
+  ctx.save(); ctx.font = "12px system-ui"; ctx.textAlign = "left"; ctx.lineWidth = 2.5;
+  items.forEach(([color, dash, text], i) => {
+    const y = a.T + 16 + 16 * i;
+    ctx.strokeStyle = color; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(a.L + 12, y - 4); ctx.lineTo(a.L + 40, y - 4); ctx.stroke();
+    ctx.fillStyle = color; ctx.fillText(text, a.L + 46, y);
+  });
+  ctx.restore();
+}
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  const C = { fg: css("--fg"), muted: css("--muted"), accent: css("--accent"), line: css("--line"), good: css("--good"), bad: css("--bad") };
+  const C = { fg: css("--fg"), muted: css("--muted"), accent: css("--accent"), line: css("--line"), good: css("--good"), bad: css("--bad"),
+              s1: css("--s1"), s2: css("--s2"), s3: css("--s3") };
   
 const g = 1.4, Rg = 0.287, v1 = Rg * 300 / 100, q = 1100, h = 0.5, ROD = 3.5, cvv = Rg / (g - 1);
 const vr = (a, r) => { const t = a * Math.PI / 180; return 1 + 0.5 * (r - 1) * (ROD + 1 - Math.cos(t) - Math.sqrt(ROD * ROD - Math.sin(t) * Math.sin(t))); };
@@ -123,8 +145,7 @@ if (graph === "piston") {
   const a = 50, l = 175, cx = 360, cy = 360, t = p.ang * Math.PI / 180;
   const pinY = cy - (a * Math.cos(t) + Math.sqrt(l * l - a * a * Math.sin(t) * Math.sin(t)));
   const crownTDC = cy - (a + l) - 30, head = crownTDC - 100 / (p.r - 1), crown = pinY - 30;
-  const hue = 220 - 220 * Math.min(1, Math.max(0, (Tn - 300) / 2300));
-  ctx.fillStyle = "hsl(" + hue + ",80%,55%)"; ctx.fillRect(cx - 45, head, 90, crown - head);
+  ctx.fillStyle = heat(Math.min(1, Math.max(0, (Tn - 300) / 2300))); ctx.fillRect(cx - 45, head, 90, crown - head);
   ctx.strokeStyle = C.fg; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx - 45, head - 4); ctx.lineTo(cx + 45, head - 4); ctx.moveTo(cx - 45, head - 4); ctx.lineTo(cx - 45, 300); ctx.moveTo(cx + 45, head - 4); ctx.lineTo(cx + 45, 300); ctx.stroke();
   ctx.fillStyle = C.muted; ctx.fillRect(cx - 45, crown, 90, 30);
   const px = cx + a * Math.sin(t), py = cy - a * Math.cos(t);
@@ -134,25 +155,23 @@ if (graph === "piston") {
   ctx.font = "13px system-ui"; ctx.textAlign = "left";
   ctx.fillText("crank angle " + p.ang + " degrees (0 = top dead centre)", 20, 30);
   ctx.fillText("gas pressure " + Pn.toFixed(0) + " kPa", 20, 52); ctx.fillText("gas temperature " + Tn.toFixed(0) + " K", 20, 74);
-  ctx.fillStyle = C.muted; ctx.fillText("colour: blue cold, red hot", 20, 96);
+  ctx.fillStyle = C.muted; ctx.fillText("colour: dark blue cold, bright yellow hot", 20, 96);
 } else if (graph === "pv") {
   const q2 = 100 * Math.pow(p.r, g), P3 = q2 * (1 + q / (cvv * T2)), vc = v1 / p.r;
   const A = axes({ x: [0, 0.9], y: [0, 1.08 * Math.max(s.pmax, P3)], xl: "specific volume v (m3/kg)", yl: "pressure P (kPa)", title: "Simulated loop against the ideal Otto loop" }, C);
-  curve(v => 100 * Math.pow(v1 / v, g), A, C.muted, vc, v1); curve(v => P3 * Math.pow(vc / v, g), A, C.muted, vc, v1);
-  ctx.strokeStyle = C.muted; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(A.X(vc), A.Y(q2)); ctx.lineTo(A.X(vc), A.Y(P3)); ctx.stroke();
-  ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.beginPath();
+  curve(v => 100 * Math.pow(v1 / v, g), A, C.muted, vc, v1, 0, DASHED); curve(v => P3 * Math.pow(vc / v, g), A, C.muted, vc, v1, 0, DASHED);
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 2; ctx.setLineDash(DASHED); ctx.beginPath(); ctx.moveTo(A.X(vc), A.Y(q2)); ctx.lineTo(A.X(vc), A.Y(P3)); ctx.stroke();
+  ctx.strokeStyle = C.s1; ctx.lineWidth = 2.5; ctx.setLineDash(SOLID); ctx.beginPath();
   s.V.forEach((v, i) => { const x = A.X(v), y = A.Y(s.P[i]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
-  dot(A, Vn, Pn, C.bad, "now");
-  ctx.font = "12px system-ui"; ctx.textAlign = "left"; ctx.fillStyle = C.accent; ctx.fillText("blue: crank-angle simulation", A.L + 12, A.T + 16);
-  ctx.fillStyle = C.muted; ctx.fillText("grey: ideal Otto (instant heat)", A.L + 12, A.T + 32);
+  dot(A, Vn, Pn, C.s2, "now");
+  legend(A, [[C.s1, SOLID, "crank-angle simulation"], [C.muted, DASHED, "ideal Otto (instant heat)"]]);
 } else {
   const A = axes({ x: [6, 14], y: [0.3, 0.7], xl: "compression ratio r", yl: "indicated efficiency (no unit)", title: "Simulation against the Otto formula" }, C);
-  curve(x => 1 - Math.pow(x, 1 - g), A, C.muted, 6, 14);
-  ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.beginPath();
+  curve(x => 1 - Math.pow(x, 1 - g), A, C.muted, 6, 14, 0, DASHED);
+  ctx.strokeStyle = C.s1; ctx.lineWidth = 2.5; ctx.setLineDash(SOLID); ctx.beginPath();
   for (let i = 0; i <= 8; i++) { const rr = 6 + i, e = sim(rr, p.start, p.dur, p.loss / 100).eta; i ? ctx.lineTo(A.X(rr), A.Y(e)) : ctx.moveTo(A.X(rr), A.Y(e)); } ctx.stroke();
-  dot(A, p.r, s.eta, C.accent, "now");
-  ctx.font = "12px system-ui"; ctx.textAlign = "left"; ctx.fillStyle = C.muted; ctx.fillText("grey: Otto formula", A.L + 12, A.T + 16);
-  ctx.fillStyle = C.accent; ctx.fillText("blue: simulation with your burn and loss", A.L + 12, A.T + 32);
+  dot(A, p.r, s.eta, C.s1, "now");
+  legend(A, [[C.muted, DASHED, "Otto formula"], [C.s1, SOLID, "simulation with your burn and loss"]]);
 }
 readout("indicated efficiency = " + s.eta.toFixed(3) + " (ideal Otto " + eO.toFixed(3) + ") &nbsp; peak pressure = " + s.pmax.toFixed(0) + " kPa &nbsp; end-of-compression T2 = " + T2.toFixed(0) + " K (illustrative knock limit with margin: 720 K) " + (T2 > 720 ? "<b>too hot</b>" : "ok") + " &nbsp; first-law error = " + s.resid.toFixed(2) + " kJ/kg");
 

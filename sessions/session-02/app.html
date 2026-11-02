@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Session 2: Otto and Diesel loops</title>
 <style>
-  :root { --bg:#ffffff; --fg:#14181f; --muted:#5b6472; --card:#f3f5f8; --accent:#1f6feb; --good:#1a7f37; --bad:#b42318; --line:#d7dce3; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e6e9ee; --muted:#9aa3b2; --card:#171b22; --accent:#58a6ff; --good:#3fb950; --bad:#f97066; --line:#2a313c; } }
+  :root { --bg:#ffffff; --fg:#14181f; --muted:#5b6472; --card:#f3f5f8; --accent:#1f6feb; --good:#1a7f37; --bad:#b42318; --line:#d7dce3;
+    /* plot series: Okabe-Ito colours (safe for colour-blind readers), always paired with a line style */
+    --s1:#0072B2; --s2:#D55E00; --s3:#009E73; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e6e9ee; --muted:#9aa3b2; --card:#171b22; --accent:#58a6ff; --good:#3fb950; --bad:#f97066; --line:#2a313c;
+    --s1:#56B4E9; --s2:#D55E00; --s3:#009E73; } }
   * { box-sizing: border-box; }
   body { margin:0; padding:16px; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, sans-serif; }
   main { max-width: 780px; margin: 0 auto; }
@@ -88,9 +91,11 @@ function axes(o, C) {
   ctx.font = "bold 13px system-ui"; ctx.fillText(o.title || "", L + w / 2, 20);
   return { X, Y, L, T, w, h };
 }
-function curve(f, a, color, x0, x1, n) {
+// line styles carry the meaning as well as colour, so the plots also read in grayscale
+const SOLID = [], DASHED = [10, 6], DOTTED = [2, 5];
+function curve(f, a, color, x0, x1, n, dash) {
   n = n || 160; ctx.save(); ctx.beginPath(); ctx.rect(a.L, a.T, a.w, a.h); ctx.clip();   // never draw outside the plot area
-  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.beginPath();
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.setLineDash(dash || SOLID); ctx.beginPath();
   for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n, y = f(x); i ? ctx.lineTo(a.X(x), a.Y(y)) : ctx.moveTo(a.X(x), a.Y(y)); }
   ctx.stroke(); ctx.restore();
 }
@@ -98,9 +103,19 @@ function dot(a, x, y, color, label) {
   ctx.fillStyle = color; ctx.beginPath(); ctx.arc(a.X(x), a.Y(y), 6, 0, 2 * Math.PI); ctx.fill();
   if (label) { ctx.textAlign = "left"; ctx.font = "12px system-ui"; ctx.fillText(label, a.X(x) + 9, a.Y(y) - 8); }
 }
+function legend(a, items) {   // items: [colour, dash, text]; draws a line sample next to each label
+  ctx.save(); ctx.font = "12px system-ui"; ctx.textAlign = "left"; ctx.lineWidth = 2.5;
+  items.forEach(([color, dash, text], i) => {
+    const y = a.T + 16 + 16 * i;
+    ctx.strokeStyle = color; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(a.L + 12, y - 4); ctx.lineTo(a.L + 40, y - 4); ctx.stroke();
+    ctx.fillStyle = color; ctx.fillText(text, a.L + 46, y);
+  });
+  ctx.restore();
+}
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  const C = { fg: css("--fg"), muted: css("--muted"), accent: css("--accent"), line: css("--line"), good: css("--good"), bad: css("--bad") };
+  const C = { fg: css("--fg"), muted: css("--muted"), accent: css("--accent"), line: css("--line"), good: css("--good"), bad: css("--bad"),
+              s1: css("--s1"), s2: css("--s2"), s3: css("--s3") };
   
 const g = p.g, r = p.r, rho = p.rho, cv = 0.287 / (g - 1), v1 = 0.287 * 300 / 100, v2 = v1 / r;
 const T2 = 300 * Math.pow(r, g - 1), P2 = 100 * Math.pow(r, g), P3o = P2 * (1 + g * (rho - 1)), v3 = rho * v2;
@@ -109,19 +124,18 @@ const etaO = rr => 1 - Math.pow(rr, 1 - g), etaD = rr => 1 - Math.pow(rr, 1 - g)
 if (graph === "pv") {
   const A = axes({ x: [0, 0.9], y: [0, 1.05 * P3o], xl: "specific volume v (m3/kg)", yl: "pressure P (kPa)", title: "Otto and Diesel loops (same r, same heat)" }, C);
   curve(v => 100 * Math.pow(v1 / v, g), A, C.fg, v2, v1);
-  curve(v => P3o * Math.pow(v2 / v, g), A, C.accent, v2, v1);
-  curve(v => P2 * Math.pow(v3 / v, g), A, C.bad, v3, v1);
-  const seg = (x0, y0, x1, y1, col) => { ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(A.X(x0), A.Y(y0)); ctx.lineTo(A.X(x1), A.Y(y1)); ctx.stroke(); };
+  curve(v => P3o * Math.pow(v2 / v, g), A, C.s1, v2, v1);
+  curve(v => P2 * Math.pow(v3 / v, g), A, C.s2, v3, v1, 0, DASHED);
+  const seg = (x0, y0, x1, y1, col, dash) => { ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.setLineDash(dash || SOLID); ctx.beginPath(); ctx.moveTo(A.X(x0), A.Y(y0)); ctx.lineTo(A.X(x1), A.Y(y1)); ctx.stroke(); ctx.setLineDash(SOLID); };
   const P4o = P3o * Math.pow(v2 / v1, g), P4d = P2 * Math.pow(v3 / v1, g);
-  seg(v2, P2, v2, P3o, C.accent); seg(v1, 100, v1, P4o, C.accent);
-  seg(v2, P2, v3, P2, C.bad); seg(v1, 100, v1, P4d, C.bad);
-  ctx.font = "12px system-ui"; ctx.textAlign = "left"; ctx.fillStyle = C.accent; ctx.fillText("blue: Otto (heat at constant volume)", A.L + 12, A.T + 16);
-  ctx.fillStyle = C.bad; ctx.fillText("red: Diesel (heat at constant pressure)", A.L + 12, A.T + 32);
+  seg(v2, P2, v2, P3o, C.s1); seg(v1, 100, v1, P4o, C.s1);
+  seg(v2, P2, v3, P2, C.s2, DASHED); seg(v1, 100, v1, P4d, C.s2, DASHED);
+  legend(A, [[C.s1, SOLID, "Otto (heat at constant volume)"], [C.s2, DASHED, "Diesel (heat at constant pressure)"]]);
 } else {
   const A = axes({ x: [4, 20], y: [0, 1], xl: "compression ratio r", yl: "ideal efficiency (no unit)", title: "Efficiency against compression ratio" }, C);
-  curve(etaC, A, C.muted, 4, 20); curve(etaO, A, C.accent, 4, 20); curve(etaD, A, C.bad, 4, 20);
-  dot(A, r, etaO(r), C.accent, "Otto"); dot(A, r, etaD(r), C.bad, "Diesel");
-  ctx.font = "12px system-ui"; ctx.textAlign = "left"; ctx.fillStyle = C.muted; ctx.fillText("grey: Carnot limit for the peak temperature rho T2", A.L + 12, A.T + 16);
+  curve(etaC, A, C.muted, 4, 20, 0, DOTTED); curve(etaO, A, C.s1, 4, 20); curve(etaD, A, C.s2, 4, 20, 0, DASHED);
+  dot(A, r, etaO(r), C.s1, "Otto"); dot(A, r, etaD(r), C.s2, "Diesel");
+  legend(A, [[C.s1, SOLID, "Otto"], [C.s2, DASHED, "Diesel"], [C.muted, DOTTED, "Carnot limit for the peak temperature rho T2"]]);
 }
 readout("Otto eta = " + etaO(r).toFixed(3) + " &nbsp; Diesel eta = " + etaD(r).toFixed(3) + " (rho = " + rho.toFixed(1) + ") &nbsp; Carnot limit for the Diesel peak temperature (" + (rho * T2).toFixed(0) + " K) = " + etaC(r).toFixed(3));
 

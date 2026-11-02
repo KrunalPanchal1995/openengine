@@ -62,6 +62,12 @@ The first figure draws the Otto and Diesel loops for the same compression ratio 
 ## D. Interactive simulation
 Run the lesson (`python start.py 2`), then open the live app: [Session 2: Otto and Diesel loops](https://krunalpanchal1995.github.io/openengine/session-02/) (or `app.html` in this folder). Move r, rho and gamma. Watch the P-V loops change and read the efficiencies. Switch to the efficiency graph and see how much a bigger r buys and how rho lowers the Diesel curve.
 
+The app uses colour-blind-safe Okabe-Ito colours and a line style for each cycle: Otto is a solid line, Diesel is dashed and the Carnot limit is dotted, so the graphs also read in grayscale and in dark mode.
+
+![Session 2 app in light mode, dark mode and grayscale: Otto solid, Diesel dashed, Carnot dotted.](../../docs/figures/s02_palette_check.png)
+
+*Session 2 app in light mode, dark mode and grayscale: Otto solid, Diesel dashed, Carnot dotted.*
+
 **Challenge.** Find r, rho and gamma so that the Diesel cycle has efficiency of at least 0.60 with a cut-off ratio of at least 2.5.
 
 ## E. Worked example and experiment
