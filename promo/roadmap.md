@@ -16,11 +16,13 @@ This is the path, not the code. Each milestone says what you learn, what you bui
 
 ## Session 5: The dual (Seiliger) cycle
 
+**Status: done.** See [Session 5](../sessions/session-05/README.md).
+
 **You will learn:** Real diesels add heat partly at constant volume and partly at constant pressure.
 
 **You will build:** A function that splits the heat and returns efficiency and a P-V path.
 
-**Checkpoint (not met by the shipped code):** At r = 18 and 1100 kJ/kg a half-and-half split gives an efficiency strictly between the shipped Diesel (0.625) and Otto (0.685) values.
+**Checkpoint (met by the shipped code):** At r = 18 and 1100 kJ/kg a half-and-half split gives an efficiency strictly between the shipped Diesel (0.625) and Otto (0.685) values.
 
 **Difficulty:** intermediate
 

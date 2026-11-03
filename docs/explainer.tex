@@ -10,7 +10,7 @@
 \setlength{\parindent}{0pt}
 \begin{document}
 
-\begin{center}{\LARGE\bfseries openengine}\\[0.4em]{\large Compare Otto and Diesel engines on P-V diagrams, in four sessions.}\\[0.2em]\small PAN IIT OSS explainer \textbullet{} higher secondary to diploma / undergraduate (levels 4-5)\end{center}
+\begin{center}{\LARGE\bfseries openengine}\\[0.4em]{\large Compare Otto and Diesel engines on P-V diagrams, in five sessions.}\\[0.2em]\small PAN IIT OSS explainer \textbullet{} higher secondary to diploma / undergraduate (levels 4-5)\end{center}
 
 \section*{Why this exists}
 Every engine turns heat into work and rejects the rest. This explainer follows the idea from the energy balance to the Otto, Diesel and Carnot cycles and a numerical simulation, using only the gas laws and the first law of thermodynamics.
@@ -18,12 +18,13 @@ Every engine turns heat into work and rejects the rest. This explainer follows t
 \section*{The end goal}
 Compare Otto and Diesel cycle efficiency on P-V diagrams. The end goal is to compare Otto and Diesel cycle efficiency on P-V diagrams: to know what you hold equal, read the loops, and explain which engine wins and why. The same ideas apply to gas turbines, power plants and refrigerators.
 
-\section*{How the four sessions build up}
+\section*{How the five sessions build up}
 \begin{enumerate}[nosep]
 \item \textbf{Session 1: Heat in, work out, heat rejected} (Level 1, conceptual interactive model, 60 min).
 \item \textbf{Session 2: Otto, Diesel and Carnot efficiency} (Level 2, mathematical engineering model, 75 min).
 \item \textbf{Session 3: Simulate the cycle and validate it} (Level 3, simulation and validation, 90 min).
 \item \textbf{Session 4: Temperature-dependent gas properties} (Level 2, mathematical engineering model, 75 min).
+\item \textbf{Session 5: The dual cycle} (Level 2, mathematical engineering model, 75 min).
 \end{enumerate}
 
 \section{Session 1: Heat in, work out, heat rejected}
@@ -249,12 +250,64 @@ An ideal Otto cycle with r = 9, T1 = 300 K and q\_in = 1100 kJ/kg (the Session 2
 \item \textbf{Graph and simulation interpretation.} In the left panel of the efficiency figure, the variable-cp curve approaches a value near the constant-gamma line as the heat input goes to zero, but not exactly 0.585. Explain why it starts there and why it does not quite reach 0.585.
 \item \textbf{Design and optimisation challenge.} Design: with Session 2's constant gamma, r = 9.88 gives an ideal efficiency of 0.60. With variable cp and q\_in = 1100 kJ/kg, what compression ratio is needed for 0.60, and what is T2? If the fuel knocks above an end-of-compression temperature of about 750 K (an illustrative number), is this design possible? What would you trade?
 \end{enumerate}
+\section{Session 5: The dual cycle}
+
+\subsection*{A. Real-world problem}
+Session 2 had two extremes: the Otto cycle adds all its heat at constant volume, the Diesel cycle all of it at constant pressure. A real high-speed diesel does both. The fuel injected just before top dead centre mixes with hot air and burns almost at once, at nearly constant volume; the rest burns as it is injected while the piston moves down, at nearly constant pressure. How does the share of heat added at constant volume change the efficiency, and why do engine designers not simply add all of it at constant volume? (Simplified air-standard model; not an engine design method.)
+
+\subsection*{B. Concept and theory}
+The dual cycle, also called the Seiliger or Sabathe cycle, has five states. 1 to 2 is isentropic compression by the compression ratio r. 2 to 3 adds a share x of the heat at constant volume, raising the pressure by the pressure ratio alpha = P3 / P2 = T3 / T2. 3 to 4 adds the rest, (1 - x) q\_in, at constant pressure, raising the volume by the cut-off ratio rho = v4 / v3 = T4 / T3. 4 to 5 is isentropic expansion back to the largest volume, and 5 to 1 rejects heat at constant volume. Using cv for the first heat and cp = gamma cv for the second, and q\_out = cv (T5 - T1), the efficiency simplifies to the closed form below. Two checks show that it contains Sessions 2's formulas: with rho = 1 (x = 1) the last fraction is (alpha - 1) / (alpha - 1) = 1 and the Otto formula returns; with alpha = 1 (x = 0) it becomes (rho\textasciicircum{}gamma - 1) / (gamma (rho - 1)), the Diesel factor. At the same r and heat, the heat added at constant volume is expanded through the whole stroke while the constant-pressure heat is expanded less, so the efficiency rises steadily from the Diesel value to the Otto value as x grows. The price is the peak pressure P3 = alpha P2, which also rises with x and must be carried by the cylinder head, the piston and the bearings.
+
+\begin{itemize}[nosep]
+\item r: compression ratio v1 / v2 (no unit)
+\item x: share of the heat added at constant volume (no unit)
+\item alpha: pressure ratio P3 / P2 during constant-volume heating (no unit)
+\item rho: cut-off ratio v4 / v3 during constant-pressure heating (no unit)
+\item T1..T5, P1..P5: temperature and pressure at the five states (K, kPa)
+\item q\_in, q\_out: heat added, heat rejected (kJ/kg)
+\end{itemize}
+
+\begin{equation*}
+x\,q_{\mathrm{in}} = c_v (T_3 - T_2),\qquad (1-x)\,q_{\mathrm{in}} = c_p (T_4 - T_3)
+\end{equation*}
+
+\begin{equation*}
+\alpha = \frac{P_3}{P_2} = \frac{T_3}{T_2},\qquad \rho = \frac{v_4}{v_3} = \frac{T_4}{T_3}
+\end{equation*}
+
+\begin{equation*}
+\eta_{\mathrm{dual}} = 1 - \frac{1}{r^{\gamma-1}}\,\frac{\alpha\rho^{\gamma} - 1}{(\alpha - 1) + \gamma\alpha(\rho - 1)}
+\end{equation*}
+
+\begin{equation*}
+\rho = 1:\ \eta = \eta_{\mathrm{Otto}},\qquad \alpha = 1:\ \eta = \eta_{\mathrm{Diesel}}
+\end{equation*}
+
+\begin{center}\includegraphics[width=0.85\linewidth]{figures/s05_eta_split.png}\\\small Efficiency of the dual cycle against the constant-volume share, between Diesel and Otto (left), and its peak pressure (right).\end{center}
+
+\subsection*{E. Worked example}
+A dual cycle with r = 18, T1 = 300 K, P1 = 100 kPa takes q\_in = 1100 kJ/kg, half at constant volume and half at constant pressure. Find the temperatures, alpha, rho, the peak pressure and the efficiency, and check the result with the closed-form formula.
+\begin{enumerate}[nosep]
+\item Compression: 18\textasciicircum{}0.4 = 3.1777, so T2 = 300 x 3.1777 = 953.3 K and P2 = 100 x 18 x 3.1777 = 5719.8 kPa.
+\item Constant volume: T3 = 953.3 + 550 / 0.7175 = 953.3 + 766.6 = 1719.9 K, so alpha = 1719.9 / 953.3 = 1.804 and the peak pressure P3 = 1.804 x 5719.8 = 10319 kPa.
+\item Constant pressure: T4 = 1719.9 + 550 / 1.0045 = 1719.9 + 547.5 = 2267.4 K, so rho = 2267.4 / 1719.9 = 1.318.
+\item Expansion from rho v2 to r v2: T5 = 2267.4 x (1.318 / 18)\textasciicircum{}0.4 = 2267.4 x 0.3515 = 796.9 K. Heat rejected q\_out = 0.7175 x (796.9 - 300) = 356.6 kJ/kg, so eta = 1 - 356.6 / 1100 = 0.676.
+\item Formula: alpha rho\textasciicircum{}1.4 - 1 = 1.804 x 1.4725 - 1 = 1.6565 and (alpha - 1) + 1.4 alpha (rho - 1) = 1.6082, ratio 1.0300; eta = 1 - 0.3147 x 1.0300 = 0.676. It agrees and lies between the Diesel value 0.625 and the Otto value 0.685.
+\end{enumerate}
+\textbf{Answer.} T2 = 953 K, T3 = 1720 K, T4 = 2267 K, T5 = 797 K; alpha = 1.804, rho = 1.318, peak pressure 10.3 MPa; efficiency 0.676, between Diesel (0.625) and Otto (0.685).
+
+\subsection*{F. Questions}
+\begin{enumerate}[nosep]
+\item \textbf{Conceptual.} At the same r and the same heat, why does moving heat from constant pressure to constant volume raise the efficiency, and why is that not free?
+\item \textbf{Numerical.} A dual cycle has r = 16, q\_in = 1000 kJ/kg and x = 0.4 (T1 = 300 K, gamma = 1.4). Find T2, T3, T4, alpha, rho and the efficiency.
+\item \textbf{Graph and simulation interpretation.} In the efficiency figure the curve rises quickly for small x and flattens near x = 1, while the peak pressure rises in a straight line. What does that mean for the last 10 percent of heat moved to constant volume?
+\item \textbf{Design and optimisation challenge.} Design: the cylinder head of a diesel engine allows a peak pressure of 9000 kPa. With q\_in = 1100 kJ/kg, find the largest constant-volume share x and the resulting efficiency at r = 16, 18 and 20. Which r would you choose, and what limits r from above?
+\end{enumerate}
 \section{Real-world mini-project}
 \textbf{Choose the compression ratio of a small generator engine.} A small generator engine can run on fuel A or fuel B. For illustration, fuel A tolerates an end-of-compression air temperature T2 of 740 K before it knocks and fuel B tolerates 800 K; the designer keeps a margin of 20 K. Use \texttt{max\_r\_knock\_free} and \texttt{engine\_cycle} from Session 3 (heat 1100 kJ/kg of air, Wiebe burn of 40 degrees from -10, 10 percent heat loss, friction mean effective pressure 100 kPa). The owner wants a brake efficiency of at least 0.45. These limits are illustrative numbers, not fuel specifications.
 
 \section{The path ahead}
 \begin{enumerate}[nosep]
-\item \textbf{Session 5: The dual (Seiliger) cycle.} A function that splits the heat and returns efficiency and a P-V path.
 \item \textbf{Session 6: T-S diagram from the simulation.} Compute entropy along the simulated cycle and draw the T-S loop with the Carnot rectangle.
 \item \textbf{Session 7: A knock model with engine speed.} An induction-time integral on the end-gas temperature history.
 \item \textbf{Session 8: Four strokes with a pumping loop.} Add gas exchange to the crank-angle model with a throttled intake.
@@ -292,6 +345,13 @@ An ideal Otto cycle with r = 9, T1 = 300 K and q\_in = 1100 kJ/kg (the Session 2
 \item \textbf{Numerical.} Hint: cv = cp - 0.287; eta = 1 - 9\textasciicircum{}(1 - gamma). Solution: cp(1500 K) = 1.214 kJ/(kg K), cv = 1.214 - 0.287 = 0.927, gamma = 1.214 / 0.927 = 1.310. Then eta = 1 - 9\textasciicircum{}(-0.310) = 1 - 0.506 = 0.494. This is below 0.530 because the real cycle also spends time at low temperature (compression from 300 K to 700 K) where gamma is close to 1.4. A single hot gamma is too pessimistic and a single cold gamma (0.585) too optimistic; the effective value 1.344 lies in between.
 \item \textbf{Graph and simulation interpretation.} Hint: With very little heat, the cycle only spans the compression from 300 K to T2. What is gamma there? Solution: With almost no heat added the expansion retraces the compression, so the cycle only sees temperatures from 300 K to about 700 K. There gamma falls from 1.40 to about 1.36, so the effective gamma is a little below 1.40 and the efficiency (about 0.57) is a little below 0.585. As the heat grows, the cycle reaches temperatures where gamma is lower still and the curve falls further.
 \item \textbf{Design and optimisation challenge.} Hint: Bisection on r with \texttt{otto\_cycle(r, 1100)["eta"]}, then read \texttt{["T"][1]}. Solution: Bisection gives r = 14.4, with T2 = 829 K. That is well above the illustrative 750 K knock limit, so a spark-ignition engine on that fuel cannot reach 0.60 even in the ideal model. Trade-offs: accept a lower efficiency at a knock-safe r (about 0.53 at r = 9); use a fuel with a higher knock limit; or move to compression ignition (a diesel compresses only air, so r = 14 to 20 is allowed), accepting higher peak pressures and the constant-pressure heat addition of Session 2. The lesson: the constant-gamma formula asks for too small an r and promises too much.
+\end{enumerate}
+\subsection*{Session 5}
+\begin{enumerate}[nosep]
+\item \textbf{Conceptual.} Hint: How much of the stroke does each part of the heat get to expand through? What happens to P3? Solution: Heat added at constant volume is added at the smallest volume, so the hot gas expands through the full compression ratio r and turns more of that heat into work. Heat added at constant pressure is added while the volume is already growing by rho, so it is expanded through only r / rho and gives less work. More constant-volume heat therefore raises the efficiency towards the Otto value. The cost is the peak pressure P3 = alpha P2, which rises with every extra kJ added at constant volume (from 5.7 MPa at x = 0 to 14.9 MPa at x = 1 for r = 18), and the engine structure must carry it.
+\item \textbf{Numerical.} Hint: T2 = 300 x 16\textasciicircum{}0.4; then 400 kJ/kg with cv = 0.7175 and 600 kJ/kg with cp = 1.0045. Solution: 16\textasciicircum{}0.4 = 3.031, so T2 = 909.4 K. T3 = 909.4 + 400 / 0.7175 = 1466.9 K, alpha = 1.613. T4 = 1466.9 + 600 / 1.0045 = 2064.2 K, rho = 1.407. T5 = 2064.2 x (1.407 / 16)\textasciicircum{}0.4 = 780.6 K, q\_out = 0.7175 x 480.6 = 344.9 kJ/kg, eta = 1 - 344.9 / 1000 = 0.655. Check: between Diesel and Otto at r = 16 (Otto 1 - 1 / 3.031 = 0.670).
+\item \textbf{Graph and simulation interpretation.} Hint: Compare the efficiency gained from x = 0 to 0.1 with the gain from 0.9 to 1.0, and the pressure rise in each step. Solution: Each step of x raises the peak pressure by the same amount (about 0.92 MPa per 0.1 at r = 18 and 1100 kJ/kg), but the efficiency gain shrinks: the first tenth gains 0.017, the last tenth only 0.0003. So the last bit of constant-volume heat costs the most pressure for the least efficiency. That is why real diesels aim for a moderate pressure rise rather than a pure Otto-like burn.
+\item \textbf{Design and optimisation challenge.} Hint: x\_max = cv T2 (P\_max / P2 - 1) / q\_in; use \texttt{max\_cv\_share} and \texttt{dual\_cycle}. Solution: r = 16: x = 0.508, eta = 0.660. r = 18: x = 0.357, eta = 0.668. r = 20: x = 0.232, eta = 0.672. A higher r leaves less room for constant-volume heat because P2 is already higher, but it still wins slightly, with diminishing returns. Above about r = 24.9 the compression alone (P2 = 100 r\textasciicircum{}1.4) exceeds 9000 kPa and no heat at all can be added at constant volume. Real choices also weigh friction, which grows with r and pressure, heat loss and cold starting; the model gives the direction, not the final number.
 \end{enumerate}
 \section{How to join}
 Read \texttt{CONTRIBUTING.md} in the repository, then pick an issue labelled \texttt{good first issue}. Repository: \url{https://github.com/KrunalPanchal1995/openengine}

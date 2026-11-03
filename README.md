@@ -2,18 +2,18 @@
 
 [![Checks](https://github.com/KrunalPanchal1995/openengine/actions/workflows/ci.yml/badge.svg)](https://github.com/KrunalPanchal1995/openengine/actions/workflows/ci.yml) ![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square) ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square) [![Open in Colab](https://img.shields.io/badge/Colab-session%201-F9AB00?style=flat-square&logo=googlecolab&logoColor=white)](https://colab.research.google.com/github/KrunalPanchal1995/openengine/blob/main/sessions/session-01/lesson.ipynb) [![Live apps](https://img.shields.io/badge/live-apps-1f6feb?style=flat-square)](https://krunalpanchal1995.github.io/openengine/)
 
-**Compare Otto and Diesel engines on P-V diagrams, in four sessions.**
+**Compare Otto and Diesel engines on P-V diagrams, in five sessions.**
 
 openengine teaches how heat engines turn heat into work, from the energy balance to Otto, Diesel and Carnot cycles and a numerical engine simulation, using only Python and a browser.
 
 - **Start from zero.** Session 1 needs only school arithmetic: heat in, work out, and the area of a rectangle.
 - **See the loops.** Every session ships a slider app that runs in the browser, with labelled P-V and efficiency graphs.
 - **Know you got it right.** Each session ends with a checkpoint that prints PASS or FAIL against hand calculations and the first law.
-- **Build the missing half.** The repo stops at Session 4 on purpose; the roadmap shows the path to the Target.
+- **Build the missing half.** The repo stops at Session 5 on purpose; the roadmap shows the path to the Target.
 
 [Target](#the-target) · [Who is this for](#who-is-this-for) · [Quick start](#quick-start) · [Sessions](#sessions) · [Roadmap](#roadmap) · [Contribute](#contribute) · [Explainer PDF](docs/explainer.pdf)
 
-> **This repo is incomplete on purpose.** Sessions 1 to 4 are here and fully working. The finished Target below is a preview of what the community can build next. We show you the path, not the code. Sessions 5 and up are yours.
+> **This repo is incomplete on purpose.** Sessions 1 to 5 are here and fully working. The finished Target below is a preview of what the community can build next. We show you the path, not the code. Sessions 6 and up are yours.
 
 ## The Target
 
@@ -55,7 +55,7 @@ cd openengine
 python start.py 1
 ```
 
-`start.py` creates a private environment, installs what is needed and runs Session 1 with its checkpoint. Next: `python start.py 2` (and so on up to `python start.py 4`), or `python start.py test` to check everything. Only a checkpoint: `python start.py check 1`.
+`start.py` creates a private environment, installs what is needed and runs Session 1 with its checkpoint. Next: `python start.py 2` (and so on up to `python start.py 5`), or `python start.py test` to check everything. Only a checkpoint: `python start.py check 1`.
 
 Four lines turn the idea of Session 2 into a result (they work as they are): Save it as `try.py` and run it with `python start.py run try.py` (this uses the private environment, where NumPy is installed):
 
@@ -76,6 +76,7 @@ Every session also opens in your browser with sliders (no install): [live apps](
 | 2 | [Otto, Diesel and Carnot efficiency](sessions/session-02/README.md) | Level 2: mathematical engineering model | 75 min | [open](https://krunalpanchal1995.github.io/openengine/session-02/) |
 | 3 | [Simulate the cycle and validate it](sessions/session-03/README.md) | Level 3: simulation and validation | 90 min | [open](https://krunalpanchal1995.github.io/openengine/session-03/) |
 | 4 | [Temperature-dependent gas properties](sessions/session-04/README.md) | Level 2: mathematical engineering model | 75 min | [open](https://krunalpanchal1995.github.io/openengine/session-04/) |
+| 5 | [The dual cycle](sessions/session-05/README.md) | Level 2: mathematical engineering model | 75 min | [open](https://krunalpanchal1995.github.io/openengine/session-05/) |
 
 Each session follows the same six steps: A real-world problem, B concept and theory, C visual explanation, D interactive simulation, E worked example and experiment, F assessment and design challenge. Each ends with `checkpoint.py`, which prints `PASS` or `FAIL` against reference numbers. Session 3 also contains the real-world mini-project: **Choose the compression ratio of a small generator engine**.
 
@@ -87,14 +88,15 @@ flowchart LR
   S2[Session 2<br/>Otto, Diesel and Carnot efficiency]
   S3[Session 3<br/>Simulate the cycle and validate it]
   S4[Session 4<br/>Temperature-dependent gas properties]
-  R[Roadmap S5+<br/>YOU build this]
+  S5[Session 5<br/>The dual cycle]
+  R[Roadmap S6+<br/>YOU build this]
   T((Target))
-  S1 --> S2 --> S3 --> S4 --> R --> T
+  S1 --> S2 --> S3 --> S4 --> S5 --> R --> T
 ```
 
 | Folder or file | What is inside |
 |---|---|
-| `sessions/` | four sessions: README (A-F), `lesson.py`, notebook, live app, exercises, activity sheet, checkpoint |
+| `sessions/` | five sessions: README (A-F), `lesson.py`, notebook, live app, exercises, activity sheet, checkpoint |
 | `promo/` | the Target: media, live links, and the roadmap (path only) |
 | `docs/` | `explainer.tex` and the built `explainer.pdf` |
 | `tests/` | runs every lesson and checkpoint headless |
@@ -106,7 +108,6 @@ flowchart LR
 
 | Milestone | What you will build | Difficulty |
 |---|---|---|
-| Session 5: The dual (Seiliger) cycle | A function that splits the heat and returns efficiency and a P-V path. | intermediate |
 | Session 6: T-S diagram from the simulation | Compute entropy along the simulated cycle and draw the T-S loop with the Carnot rectangle. | intermediate |
 | Session 7: A knock model with engine speed | An induction-time integral on the end-gas temperature history. | advanced |
 | Session 8: Four strokes with a pumping loop | Add gas exchange to the crank-angle model with a throttled intake. | advanced |
