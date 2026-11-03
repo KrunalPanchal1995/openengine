@@ -32,7 +32,7 @@ Try it live:
 - [Math Visual Studio: thermodynamic cycles (Atlas S55)](https://krunalpanchal1995.github.io/studio/#atlas?ch=S55&ex=1)
 - [Math Visual Studio: the second law and entropy (Atlas S54)](https://krunalpanchal1995.github.io/studio/#atlas?ch=S54&ex=1)
 
-How the Target was made is shown only as a path in [promo/roadmap.md](promo/roadmap.md).
+How the Target was made is shown as a path in [promo/roadmap.md](promo/roadmap.md). A community reproduction with its method and checks is in [target/README.md](target/README.md) (`python target/target.py`).
 
 ## Who is this for
 **higher secondary to diploma / undergraduate (levels 4-5).** Topic area: Heat, Thermodynamics and Fluid Mechanics.
@@ -99,6 +99,7 @@ flowchart LR
 | `sessions/` | five sessions: README (A-F), `lesson.py`, notebook, live app, exercises, activity sheet, checkpoint |
 | `promo/` | the Target: media, live links, and the roadmap (path only) |
 | `docs/` | `explainer.tex` and the built `explainer.pdf` |
+| `target/` | a reproduction of the Target animation, its method and its checks |
 | `tests/` | runs every lesson and checkpoint headless |
 | `start.py` | one command to set up and run anything |
 | `QUALITY.md`, `RUBRIC.md` | the quality checklist and the scoring rubric |

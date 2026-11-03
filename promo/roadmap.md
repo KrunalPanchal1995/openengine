@@ -59,3 +59,5 @@ This is the path, not the code. Each milestone says what you learn, what you bui
 ## The final step
 
 Combine the milestones: three cycles with temperature-dependent gas, T-S loops and a knock-limited compression ratio, animated side by side with live efficiency. If your result looks like the Target animation, open a pull request and tell us how you did it.
+
+A first reproduction of the three ideal cycles, with its method, is in [target/README.md](../target/README.md); it reaches 0.585, 0.624 and 0.867. Making it use the milestones above (variable cp, the simulated cycle, a knock-limited r) is still open.
