@@ -1,7 +1,7 @@
 [project]
 name = "openengine"
 version = "0.1.0"
-description = "Learn how engines work: heat, work, P-V loops, Otto and Diesel efficiency, from scratch in 3 sessions."
+description = "Learn how engines work: heat, work, P-V loops, Otto and Diesel efficiency, from scratch in 4 sessions."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

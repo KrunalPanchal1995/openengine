@@ -4,11 +4,13 @@ This is the path, not the code. Each milestone says what you learn, what you bui
 
 ## Session 4: Temperature-dependent gas properties
 
+**Status: done.** See [Session 4](../sessions/session-04/README.md).
+
 **You will learn:** Why cp and cv grow with temperature and how this lowers the real efficiency.
 
 **You will build:** The Otto cycle with cv(T) from a simple polynomial instead of a constant gamma.
 
-**Checkpoint (not met by the shipped code):** An ideal Otto efficiency at r = 9 and q_in = 1100 kJ/kg below 0.56 (the shipped constant-gamma model gives 0.585).
+**Checkpoint (met by the shipped code):** An ideal Otto efficiency at r = 9 and q_in = 1100 kJ/kg below 0.56 (the shipped constant-gamma model gives 0.585).
 
 **Difficulty:** intermediate
 

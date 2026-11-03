@@ -10,7 +10,7 @@
 \setlength{\parindent}{0pt}
 \begin{document}
 
-\begin{center}{\LARGE\bfseries openengine}\\[0.4em]{\large Compare Otto and Diesel engines on P-V diagrams, in three sessions.}\\[0.2em]\small PAN IIT OSS explainer \textbullet{} higher secondary to diploma / undergraduate (levels 4-5)\end{center}
+\begin{center}{\LARGE\bfseries openengine}\\[0.4em]{\large Compare Otto and Diesel engines on P-V diagrams, in four sessions.}\\[0.2em]\small PAN IIT OSS explainer \textbullet{} higher secondary to diploma / undergraduate (levels 4-5)\end{center}
 
 \section*{Why this exists}
 Every engine turns heat into work and rejects the rest. This explainer follows the idea from the energy balance to the Otto, Diesel and Carnot cycles and a numerical simulation, using only the gas laws and the first law of thermodynamics.
@@ -18,11 +18,12 @@ Every engine turns heat into work and rejects the rest. This explainer follows t
 \section*{The end goal}
 Compare Otto and Diesel cycle efficiency on P-V diagrams. The end goal is to compare Otto and Diesel cycle efficiency on P-V diagrams: to know what you hold equal, read the loops, and explain which engine wins and why. The same ideas apply to gas turbines, power plants and refrigerators.
 
-\section*{How the three sessions build up}
+\section*{How the four sessions build up}
 \begin{enumerate}[nosep]
 \item \textbf{Session 1: Heat in, work out, heat rejected} (Level 1, conceptual interactive model, 60 min).
 \item \textbf{Session 2: Otto, Diesel and Carnot efficiency} (Level 2, mathematical engineering model, 75 min).
 \item \textbf{Session 3: Simulate the cycle and validate it} (Level 3, simulation and validation, 90 min).
+\item \textbf{Session 4: Temperature-dependent gas properties} (Level 2, mathematical engineering model, 75 min).
 \end{enumerate}
 
 \section{Session 1: Heat in, work out, heat rejected}
@@ -195,12 +196,64 @@ Simulate the ideal Otto cycle with r = 9 and q\_in = 1100 kJ/kg (P1 = 100 kPa, T
 \item \textbf{Design and optimisation challenge.} Design: a generator engine uses fuel A (T2 limit 740 K) with a 20 K margin, or fuel B (800 K). Choose r for each in steps of 0.5, find the modelled brake efficiency (10 percent loss, friction 100 kPa) and say which fuel meets a 0.45 target. What r would be needed?
 \end{enumerate}
 
+\section{Session 4: Temperature-dependent gas properties}
+
+\subsection*{A. Real-world problem}
+Session 2 promised an ideal Otto efficiency of 0.585 at r = 9, yet a real petrol engine reaches perhaps 0.25 to 0.35. Session 3 blamed burn time, heat loss and friction. A quieter part of the gap hides in one number: gamma = 1.4 is the value for cold air. When air is hot its molecules vibrate as well as move and spin, so each kelvin costs more energy and gamma falls. How much efficiency does that cost even in a perfect engine, and does it change the best compression ratio? (Simplified air-standard model; not an engine design method.)
+
+\subsection*{B. Concept and theory}
+An ideal gas still obeys P v = R T, but its heat capacities depend on temperature. Data tables (JANAF, NASA) fit cp of each gas with a polynomial cp / R = a1 + a2 T + a3 T\textasciicircum{}2 + a4 T\textasciicircum{}3 + a5 T\textasciicircum{}4, with one set of coefficients for 200 to 1000 K and another for 1000 to 6000 K. Air is 79 percent N2 and 21 percent O2 by moles, and for a mixture of ideal gases the coefficients mix in that ratio. Then cv = cp - R and gamma = cp / cv, which falls from 1.40 at 300 K to 1.33 at 1000 K and 1.30 at 2000 K. Integrating cp gives the enthalpy h(T) and the internal energy u = h - R T. Heat at constant volume raises u, so q\_in = u(T3) - u(T2) and q\_out = u(T4) - u(T1). For a reversible step with no heat the first law gives cv(T) dT / T = -R dv / v, which no longer integrates to a power law. Instead define phi(T) = s0(T) - R ln T, where s0 is the tabulated standard entropy: then phi(T2) - phi(T1) = R ln(v1 / v2) = R ln r. Because phi always grows with T, each state follows from a one-line bisection. With constant gamma, u = cv T and phi = cv ln T, and every step reduces to Session 2. With variable cp the compression ends a little cooler, the same heat raises the temperature much less because hot air has a larger cv, and the expansion with its low gamma returns less of the heat as work. A useful summary is the effective gamma: the constant value that would give the same efficiency in the Otto formula.
+
+\begin{itemize}[nosep]
+\item cp, cv: specific heats at constant pressure and volume (kJ/(kg K))
+\item gamma: cp / cv at a given temperature (no unit)
+\item a1..a7: NASA polynomial coefficients (a6, a7 fix h and s) (various)
+\item u, h: specific internal energy and enthalpy (kJ/kg)
+\item s0, phi: standard entropy at 1 bar, and phi = s0 - R ln T (kJ/(kg K))
+\item gamma\_eff: constant gamma giving the same Otto efficiency (no unit)
+\end{itemize}
+
+\begin{equation*}
+\frac{c_p(T)}{R} = a_1 + a_2 T + a_3 T^2 + a_4 T^3 + a_5 T^4,\qquad c_v = c_p - R,\qquad \gamma = \frac{c_p}{c_v}
+\end{equation*}
+
+\begin{equation*}
+u(T) = h(T) - R T,\qquad q_{\mathrm{in}} = u(T_3) - u(T_2),\qquad q_{\mathrm{out}} = u(T_4) - u(T_1)
+\end{equation*}
+
+\begin{equation*}
+c_v(T)\,\frac{dT}{T} = -R\,\frac{dv}{v}\quad\Rightarrow\quad \phi(T_2) - \phi(T_1) = R\ln r,\qquad \phi(T) = s^0(T) - R\ln T
+\end{equation*}
+
+\begin{equation*}
+\eta = 1 - \frac{q_{\mathrm{out}}}{q_{\mathrm{in}}},\qquad \gamma_{\mathrm{eff}} = 1 + \frac{\ln\!\left(1/(1-\eta)\right)}{\ln r}
+\end{equation*}
+
+\begin{center}\includegraphics[width=0.85\linewidth]{figures/s04_cp_gamma.png}\\\small cp of air rises with temperature and gamma falls; dashed lines are the constant Session 2 values.\end{center}
+
+\subsection*{E. Worked example}
+An ideal Otto cycle with r = 9, T1 = 300 K and q\_in = 1100 kJ/kg (the Session 2 example), but with cp(T) of air from the NASA polynomial. Find T2, T3, T4, the efficiency and the effective gamma, and check the first law.
+\begin{enumerate}[nosep]
+\item Compression: phi(300 K) = 5.0787 kJ/(kg K) and R ln 9 = 0.287 x 2.1972 = 0.6306, so phi(T2) = 5.7093. Bisection gives T2 = 700.0 K (constant gamma gave 722.5 K).
+\item Heat at constant volume: u(T2) = 215.4 kJ/kg, so u(T3) = 215.4 + 1100 = 1315.4 kJ/kg and T3 = 1927 K (constant gamma gave 2256 K). The mean cv over this step is 1100 / 1227 = 0.896 kJ/(kg K), not 0.7175.
+\item Expansion: phi(T4) = phi(T3) - 0.6306, so T4 = 964 K (constant gamma gave 937 K).
+\item Rejected heat: q\_out = u(964 K) - u(300 K) = 432.4 - (-84.2) = 516.6 kJ/kg (constant gamma gave 456.8). Efficiency = 1 - 516.6 / 1100 = 0.530.
+\item Effective gamma = 1 + ln(1 / 0.470) / ln 9 = 1.344, between gamma(T3) = 1.298 and gamma(T1) = 1.399. The P dv area of the loop traced with RK4 is 583.4 kJ/kg, equal to q\_in - q\_out = 583.4 kJ/kg.
+\end{enumerate}
+\textbf{Answer.} T2 = 700 K, T3 = 1927 K, T4 = 964 K; efficiency 0.530 against 0.585 with constant gamma, below the roadmap target of 0.56. The effective gamma is 1.344.
+
+\subsection*{F. Questions}
+\begin{enumerate}[nosep]
+\item \textbf{Conceptual.} Why does adding more heat per cycle lower the ideal Otto efficiency once cp depends on temperature, while in Session 2 the efficiency did not depend on the heat at all?
+\item \textbf{Numerical.} Using \texttt{cp\_air}, find cp, cv and gamma of air at 1500 K. Then estimate the Otto efficiency at r = 9 if you used that single gamma for the whole cycle. Is it above or below the variable-cp answer of 0.530, and why?
+\item \textbf{Graph and simulation interpretation.} In the left panel of the efficiency figure, the variable-cp curve approaches a value near the constant-gamma line as the heat input goes to zero, but not exactly 0.585. Explain why it starts there and why it does not quite reach 0.585.
+\item \textbf{Design and optimisation challenge.} Design: with Session 2's constant gamma, r = 9.88 gives an ideal efficiency of 0.60. With variable cp and q\_in = 1100 kJ/kg, what compression ratio is needed for 0.60, and what is T2? If the fuel knocks above an end-of-compression temperature of about 750 K (an illustrative number), is this design possible? What would you trade?
+\end{enumerate}
 \section{Real-world mini-project}
 \textbf{Choose the compression ratio of a small generator engine.} A small generator engine can run on fuel A or fuel B. For illustration, fuel A tolerates an end-of-compression air temperature T2 of 740 K before it knocks and fuel B tolerates 800 K; the designer keeps a margin of 20 K. Use \texttt{max\_r\_knock\_free} and \texttt{engine\_cycle} from Session 3 (heat 1100 kJ/kg of air, Wiebe burn of 40 degrees from -10, 10 percent heat loss, friction mean effective pressure 100 kPa). The owner wants a brake efficiency of at least 0.45. These limits are illustrative numbers, not fuel specifications.
 
 \section{The path ahead}
 \begin{enumerate}[nosep]
-\item \textbf{Session 4: Temperature-dependent gas properties.} The Otto cycle with cv(T) from a simple polynomial instead of a constant gamma.
 \item \textbf{Session 5: The dual (Seiliger) cycle.} A function that splits the heat and returns efficiency and a P-V path.
 \item \textbf{Session 6: T-S diagram from the simulation.} Compute entropy along the simulated cycle and draw the T-S loop with the Carnot rectangle.
 \item \textbf{Session 7: A knock model with engine speed.} An induction-time integral on the end-gas temperature history.
@@ -233,6 +286,13 @@ Simulate the ideal Otto cycle with r = 9 and q\_in = 1100 kJ/kg (P1 = 100 kPa, T
 \item \textbf{Design and optimisation challenge.} Hint: Use max\_r\_knock\_free and engine\_cycle. Solution: Fuel A: r = 8.5 (T2 = 706 K), brake 0.436: misses the target. Fuel B: r = 10.5 (T2 = 768 K), brake 0.463: meets it. The smallest r that reaches 0.45 is 9.5 (T2 = 738 K), which fuel A cannot allow with its margin. Trade-off: a better fuel (or a lower friction or loss) is needed for the target; raising r above the knock limit would risk damage. All limits are illustrative.
 \end{enumerate}
 
+\subsection*{Session 4}
+\begin{enumerate}[nosep]
+\item \textbf{Conceptual.} Hint: What does more heat do to T3, and what does a higher temperature do to gamma during the expansion? Solution: With constant gamma the efficiency 1 - 1 / r\textasciicircum{}(gamma-1) contains only r and gamma, so the heat cancels out. With variable cp, more heat means a hotter gas, and hot air has a larger cv and a smaller gamma. The expansion follows an isentrope with low gamma, along which the temperature falls less for the same volume ratio, so the gas leaves the expansion hotter and more heat is thrown away at the bottom. The more heat, the hotter the cycle and the lower the effective gamma: 1.364 at 500 kJ/kg, 1.344 at 1100 kJ/kg, 1.326 at 2000 kJ/kg.
+\item \textbf{Numerical.} Hint: cv = cp - 0.287; eta = 1 - 9\textasciicircum{}(1 - gamma). Solution: cp(1500 K) = 1.214 kJ/(kg K), cv = 1.214 - 0.287 = 0.927, gamma = 1.214 / 0.927 = 1.310. Then eta = 1 - 9\textasciicircum{}(-0.310) = 1 - 0.506 = 0.494. This is below 0.530 because the real cycle also spends time at low temperature (compression from 300 K to 700 K) where gamma is close to 1.4. A single hot gamma is too pessimistic and a single cold gamma (0.585) too optimistic; the effective value 1.344 lies in between.
+\item \textbf{Graph and simulation interpretation.} Hint: With very little heat, the cycle only spans the compression from 300 K to T2. What is gamma there? Solution: With almost no heat added the expansion retraces the compression, so the cycle only sees temperatures from 300 K to about 700 K. There gamma falls from 1.40 to about 1.36, so the effective gamma is a little below 1.40 and the efficiency (about 0.57) is a little below 0.585. As the heat grows, the cycle reaches temperatures where gamma is lower still and the curve falls further.
+\item \textbf{Design and optimisation challenge.} Hint: Bisection on r with \texttt{otto\_cycle(r, 1100)["eta"]}, then read \texttt{["T"][1]}. Solution: Bisection gives r = 14.4, with T2 = 829 K. That is well above the illustrative 750 K knock limit, so a spark-ignition engine on that fuel cannot reach 0.60 even in the ideal model. Trade-offs: accept a lower efficiency at a knock-safe r (about 0.53 at r = 9); use a fuel with a higher knock limit; or move to compression ignition (a diesel compresses only air, so r = 14 to 20 is allowed), accepting higher peak pressures and the constant-pressure heat addition of Session 2. The lesson: the constant-gamma formula asks for too small an r and promises too much.
+\end{enumerate}
 \section{How to join}
 Read \texttt{CONTRIBUTING.md} in the repository, then pick an issue labelled \texttt{good first issue}. Repository: \url{https://github.com/KrunalPanchal1995/openengine}
 
